@@ -1,8 +1,7 @@
 #pragma once
-class Player : public Entity
+class Player
 {
 public:
 	Player();
 	~Player();
 };
-

@@ -27,8 +27,5 @@ private:
 	sf::View							mWorldView;
 	TextureHolder						mTextures;
 
-	SceneNode							mSceneGraph;
-	std::array<SceneNode*, LayerCount>	mSceneLayers;
-
 	sf::FloatRect						mWorldBounds;
 };
