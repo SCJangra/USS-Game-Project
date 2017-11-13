@@ -1,10 +1,5 @@
 #pragma once
-// Forward declaration
-namespace sf
-{
-	class RenderWindow;
-}
-
+#include "ResourceIdentifiers.h"
 class World : private sf::NonCopyable
 {
 public:
@@ -36,7 +31,4 @@ private:
 	std::array<SceneNode*, LayerCount>	mSceneLayers;
 
 	sf::FloatRect						mWorldBounds;
-	sf::Vector2f						mSpawnPosition;
-	float								mScrollSpeed;
-	Aircraft*							mPlayerAircraft;
 };
