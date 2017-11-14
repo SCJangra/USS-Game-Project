@@ -6,10 +6,7 @@ const float Player::MovementSpeed = 200.f;
 Player::Player(sf::Vector2f initPosition)
 	: mBody({ 30, 50 })
 	, mRoller(15)
-	, mIsMovingUp(false)
 	, mIsMovingDown(false)
-	, mIsMovingRight(false)
-	, mIsMovingLeft(false)
 	, mIsOnPlatform(false)
 	, mMovement(0.f, 0.f)
 {
@@ -32,6 +29,7 @@ void Player::move(sf::Vector2f distance)
 {
 	mBody.move(distance);
 	mRoller.move(distance);
+	mIsOnPlatform = false;
 }
 
 void Player::update(sf::Time dt)
@@ -71,7 +69,7 @@ void Player::handelInput(sf::Time dt)
 	sf::Vector2f movement(0.f, 0.f);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 		movement.y -= MovementSpeed;
-		mIsMovingUp = true;
+		mIsMovingDown = false;
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
@@ -83,7 +81,7 @@ void Player::handelInput(sf::Time dt)
 
 	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::W) && !mIsOnPlatform) {
 		movement.y += MovementSpeed;
-		mIsMovingUp = false;
+		mIsMovingDown = true;
 	}
 	
 	move(movement * dt.asSeconds());

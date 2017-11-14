@@ -13,6 +13,21 @@ World::World(sf::RenderWindow& window)
 
 void World::update(sf::Time dt)
 {
+	for (int i = 0; i < mPlatforms.size(); i++) {
+		if (mFirstPlayer.isFalling()) {
+			sf::Vector2f platformPosition = mPlatforms[i].get()->getPosition();
+			sf::Vector2f platformSize = mPlatforms[i].get()->getSize();
+			sf::Vector2f playerBound = mFirstPlayer.getLoverBound();
+			if (
+				playerBound.x > platformPosition.x &&
+				playerBound.y > platformPosition.y &&
+				playerBound.x < platformPosition.x + platformSize.x &&
+				playerBound.y < platformPosition.y + platformSize.y
+				) {
+				mFirstPlayer.setOnPlatform(true);
+			}
+		}
+	}
 	mFirstPlayer.update(dt);
 }
 
@@ -31,9 +46,9 @@ void World::loadTextures()
 
 void World::buildScene()
 {
-	RectPointer rect(new sf::RectangleShape({ 1366, 30 }));
-	rect->setPosition({ 0, 668 });
-	rect->setFillColor(sf::Color::White);
-
-	mPlatforms.push_back(std::move(rect));
+	RectPointer r = RectPointer(new sf::RectangleShape({ 1366, 30 }));
+	Platform p;
+	r->setPosition(0, 668);
+	p.set(std::move(r));
+	mPlatforms.push_back(p.get());
 }

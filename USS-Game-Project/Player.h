@@ -25,10 +25,7 @@ private:
 	sf::RectangleShape			mBody;
 	sf::CircleShape				mRoller;
 
-	bool						mIsMovingUp;
 	bool						mIsMovingDown;
-	bool						mIsMovingRight;
-	bool						mIsMovingLeft;
 	bool						mIsOnPlatform;
 
 	static const float			MovementSpeed;
