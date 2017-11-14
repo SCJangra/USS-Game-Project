@@ -50,5 +50,6 @@ void World::buildScene()
 	Platform p;
 	r->setPosition(0, 668);
 	p.set(std::move(r));
+	std::string b = "Changes";
 	mPlatforms.push_back(p.get());
 }
