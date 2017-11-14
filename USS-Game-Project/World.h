@@ -12,20 +12,9 @@ private:
 	void								loadTextures();
 	void								buildScene();
 
-
 private:
-	enum Layer
-	{
-		Background,
-		Air,
-		LayerCount
-	};
-
-
-private:
+	Player								mFirstPlayer;
 	sf::RenderWindow&					mWindow;
-	sf::View							mWorldView;
 	TextureHolder						mTextures;
-
-	sf::FloatRect						mWorldBounds;
+	std::vector<std::unique_ptr<sf::RectangleShape>>				mPlatforms;
 };

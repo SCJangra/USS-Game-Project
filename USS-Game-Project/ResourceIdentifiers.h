@@ -19,4 +19,5 @@ namespace Textures
 template <typename Resource, typename Identifier>
 class ResourceHolder;
 
-typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
+typedef ResourceHolder<sf::Texture, Textures::ID>	TextureHolder;
+typedef std::unique_ptr<sf::RectangleShape>			RectPointer;

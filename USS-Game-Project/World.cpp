@@ -3,35 +3,37 @@
 
 World::World(sf::RenderWindow& window)
 	: mWindow(window)
-	, mWorldView(window.getDefaultView())
 	, mTextures()
-	, mWorldBounds(0.f, 0.f, mWorldView.getSize().x, mWorldView.getSize().y)
+	, mFirstPlayer({ 200, 200 })
+	, mPlatforms()
 {
 	loadTextures();
 	buildScene();
-
-	// Prepare the view
-	mWorldView.setCenter(mWorldView.getSize().x / 2.f, mWorldBounds.height - mWorldView.getSize().y / 2.f);
 }
 
 void World::update(sf::Time dt)
 {
+	mFirstPlayer.update(dt);
 }
 
 void World::draw()
 {
-	mWindow.setView(mWorldView);
+	mFirstPlayer.draw(mWindow);
+
+	for (int i = 0; i < mPlatforms.size(); i++) {
+		mWindow.draw(*mPlatforms[i].get());
+	}
 }
 
 void World::loadTextures()
 {
-	mTextures.load(Textures::Desert, "Assets/Textures/Background.jpg");
 }
 
 void World::buildScene()
 {
+	RectPointer rect(new sf::RectangleShape({ 1366, 30 }));
+	rect->setPosition({ 0, 668 });
+	rect->setFillColor(sf::Color::White);
 
-	// Prepare the tiled background
-	sf::Texture& texture = mTextures.get(Textures::Desert);
-	sf::IntRect textureRect(mWorldBounds);
+	mPlatforms.push_back(std::move(rect));
 }
