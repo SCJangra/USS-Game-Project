@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Player.h"
 
-const float Player::MovementSpeed = 200.f;
+const float Player::MovementSpeed = 300.f;
 
 Player::Player(sf::Vector2f initPosition)
 	: mBody({ 30, 50 })
