@@ -56,7 +56,7 @@ void World::buildScene()
 	createPlatform({ 30, 738 }, { 0, 0 }); 
 	createPlatform({ 30,738 }, { 1336,0 }); 
 
-	createPlatform({ 450,15}, { 70,608 });
+	createPlatform({ 450,15}, { 70,608 });//level
 	createPlatform({ 150,15 }, { 600,608 });
 	createPlatform({ 375,15 }, { 900,608 });
 	createPlatform({ 200,15}, { 90,473 });
