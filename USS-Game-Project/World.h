@@ -9,23 +9,24 @@ public:
 
 
 private:
+
+	enum class Collision {
+		Left,
+		Right,
+		Bottom
+	};
+	
 	void								loadTextures();
 	void								buildScene();
-
-
-private:
-	enum Layer
-	{
-		Background,
-		Air,
-		LayerCount
-	};
-
+	void								checkCollisions(Collision direction);
+	void								createPlatform(sf::Vector2f size, sf::Vector2f position, sf::Color color = sf::Color::White);
+	void								spawnEnemy();
 
 private:
+	Player								mFirstPlayer;
 	sf::RenderWindow&					mWindow;
-	sf::View							mWorldView;
 	TextureHolder						mTextures;
-
-	sf::FloatRect						mWorldBounds;
+	std::vector<RectPointer>			mPlatforms;
+	std::vector<Enemy>					mEnemies;
+	static int							MaxEnemies;
 };
