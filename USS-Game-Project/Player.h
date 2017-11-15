@@ -1,32 +1,33 @@
 #pragma once
 class Player
 {
-public:
+public: // Methods
 	Player(sf::Vector2f initPosition);
 
 	void						draw(sf::RenderWindow& window);
 	void						update(sf::Time dt);
 
-	bool						isOnPlatform();
-	void						setOnPlatform(bool onPlatform);
-
 	const sf::Vector2f			getLoverBound();
+	const sf::Vector2f			getLeftBound();
+	const sf::Vector2f			getRightBound();
 
 	bool						isFalling();
 
-	~Player();
+public:  // Public Data
+	bool						leftContact;
+	bool						rightContact;
+	bool						bottomContact;
 
-private:
+private: // Functions or Methods
 	void						move(sf::Vector2f distance);
 	void						handelInput(sf::Time dt);
 
-private:
+private: // Data Members
 	sf::Vector2f				mMovement;
 	sf::RectangleShape			mBody;
 	sf::CircleShape				mRoller;
 
 	bool						mIsMovingDown;
-	bool						mIsOnPlatform;
 
 	static const float			MovementSpeed;
 };

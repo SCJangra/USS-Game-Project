@@ -11,8 +11,6 @@ private:
 	void					update(sf::Time elapsedTime);
 	void					render();
 
-	void					handlePlayerInput(sf::Keyboard::Key key, bool isPressed);
-
 
 private:
 	static const sf::Time	TimePerFrame;
