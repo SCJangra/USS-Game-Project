@@ -55,6 +55,21 @@ void World::buildScene()
 	createPlatform({ 340, height }, { 1026 , 738 });
 	createPlatform({ 30, 738 }, { 0, 0 }); 
 	createPlatform({ 30,738 }, { 1336,0 }); 
+
+	createPlatform({ 450,15}, { 70,608 });
+	createPlatform({ 150,15 }, { 600,608 });
+	createPlatform({ 375,15 }, { 900,608 });
+	createPlatform({ 200,15}, { 90,473 });
+	createPlatform({ 300,15 }, { 380,473 });
+	createPlatform({ 350,15 }, { 856,473});
+	createPlatform({ 175,15 }, { 30,338 });
+	createPlatform({ 300,15 }, { 350,338 });
+	createPlatform({ 250,15 }, { 750,338 });
+	createPlatform({ 140,15 }, { 1196,338 });
+	createPlatform({ 350,15 }, { 160,203 });
+	createPlatform({ 100,15 }, { 683,203 });
+	createPlatform({ 350,15 }, { 900,203 });
+
 }
 
 void World::checkCollisions(Collision direction)

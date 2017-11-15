@@ -8,7 +8,7 @@ const sf::Time Game::TimePerFrame = sf::seconds(1.f / 60.f);
 
 Game::Game()
 	: mSettings(0U, 0U, 0U)
-	, mWindow(sf::VideoMode(1366, 768), "World", sf::Style::Default, mSettings)
+	, mWindow(sf::VideoMode(1366, 768), "World", sf::Style::Fullscreen, mSettings)
 	, mWorld(mWindow)
 {
 }
