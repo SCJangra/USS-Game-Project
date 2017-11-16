@@ -1,83 +1,122 @@
 #include "stdafx.h"
 #include "Player.h"
 
-const float Player::MovementSpeed = 300.f;
-
 Player::Player(sf::Vector2f initPosition)
-	: mBody({ 30, 50 })
-	, mRoller(15)
+	: Entity()
 	, mIsMovingDown(false)
-	, bottomContact(false)
-	, mMovement(0.f, 0.f)
+	, mIsFacingRight(true)
 {
+	mBody.setSize({ 30, 50 });
 	mBody.setPosition({ initPosition.x, initPosition.y });
 	//mBody.setOrigin({ 15, 25 });
 	mBody.setFillColor(sf::Color::Green);
 
+	mRoller.setRadius(15.f);
 	mRoller.setOrigin({ 15, 15 });
 	mRoller.setFillColor(sf::Color::Yellow);
 	mRoller.setPosition(initPosition.x + 15, initPosition.y + 50);
+
+	MovementSpeed = 300.f;
 }
 
 void Player::draw(sf::RenderWindow & window)
 {
 	window.draw(mBody);
 	window.draw(mRoller);
+
+	for (int i = 0; i < Bullets.size(); i++) {
+		Bullets[i]->draw(window);
+		if (Bullets[i]->getPosition().x > 1366.f ||
+			Bullets[i]->getPosition().x < 0
+		) 
+		{
+			Bullets.erase(Bullets.begin() + i);
+		}
+	}
 }
 
 void Player::move(sf::Vector2f distance)
 {
 	mBody.move(distance);
 	mRoller.move(distance);
-	bottomContact = false;
-	leftContact = false;
-	rightContact = false;
+	mBottomContact = false;
+	mRightContact = false;
+	mLeftContact = false;
 }
 
 void Player::update(sf::Time dt)
 {
-	handelInput(dt);
+	handelMovement(dt);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::J)) {
+		fireBullet();
+	}
+
+	
 }
 
-const sf::Vector2f Player::getLoverBound()
+void Player::handelMovement(sf::Time& dt)
 {
-	return sf::Vector2f(mRoller.getPosition().x, mRoller.getPosition().y + 15);
-}
-
-const sf::Vector2f Player::getLeftBound()
-{
-	return sf::Vector2f(mBody.getPosition());
-}
-
-const sf::Vector2f Player::getRightBound()
-{
-	return sf::Vector2f(mBody.getPosition().x + 30, mBody.getPosition().y);
-}
-
-bool Player::isFalling()
-{
-	return mIsMovingDown;
-}
-
-void Player::handelInput(sf::Time dt)
-{
+	static sf::Clock clock;
 	sf::Vector2f movement(0.f, 0.f);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+	bool keyPressed_W = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
+	bool keyPressed_S = sf::Keyboard::isKeyPressed(sf::Keyboard::S);
+	bool keyPressed_A = sf::Keyboard::isKeyPressed(sf::Keyboard::A);
+	bool keyPressed_D = sf::Keyboard::isKeyPressed(sf::Keyboard::D);
+
+	if (keyPressed_W && !mTopContact) {
 		movement.y -= MovementSpeed;
 		mIsMovingDown = false;
 	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && !leftContact)
+	if (keyPressed_S)					movement.y += MovementSpeed;
+	if (keyPressed_A && !mLeftContact) {
 		movement.x -= MovementSpeed;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		movement.y += MovementSpeed;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && !rightContact)
+		mIsFacingRight = false;
+	}
+	if (!keyPressed_A && mLeftContact)	movement.x += MovementSpeed;
+	if (keyPressed_D && !mRightContact) {
 		movement.x += MovementSpeed;
+		mIsFacingRight = true;
+	}
+	if (!keyPressed_D && mRightContact) movement.x -= MovementSpeed;
 
-	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::W) && !bottomContact) {
+	if (!keyPressed_W && !mBottomContact) {
 		movement.y += MovementSpeed;
 		mIsMovingDown = true;
 	}
 	
 	move(movement * dt.asSeconds());
+}
+
+const Entity::EntityBounds Player::getEntityBounds()
+{
+	EntityBounds bounds;
+	bounds.position = mBody.getPosition();
+	bounds.size.x = mBody.getSize().x;
+	bounds.size.y = mBody.getSize().y + mRoller.getRadius();
+	return bounds;
+}
+
+void Player::fireBullet()
+{
+	static sf::Clock clock;
+	if (clock.getElapsedTime()	> sf::seconds(.2f) &&
+		MaxBullets				> Bullets.size()
+	) 
+	{
+		std::unique_ptr<Bullet> bullet(new Bullet(mIsFacingRight));
+		if (mIsFacingRight) {
+			bullet->setPosition({
+				mBody.getPosition().x + mBody.getSize().x,
+				mBody.getPosition().y + mBody.getSize().y / 2 });
+		}
+		else
+		{
+			bullet->setPosition({
+				mBody.getPosition().x,
+				mBody.getPosition().y + mBody.getSize().y / 2 });
+		}
+		Bullets.push_back(std::move(bullet));
+
+		clock.restart();
+	}
 }

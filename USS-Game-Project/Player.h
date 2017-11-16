@@ -1,33 +1,23 @@
 #pragma once
-class Player
+class Player : public Entity
 {
 public: // Methods
 	Player(sf::Vector2f initPosition);
 
-	void						draw(sf::RenderWindow& window);
-	void						update(sf::Time dt);
+	int MaxBullets = 10;
+	std::vector<std::unique_ptr<Bullet>>	Bullets;
 
-	const sf::Vector2f			getLoverBound();
-	const sf::Vector2f			getLeftBound();
-	const sf::Vector2f			getRightBound();
+	void									draw(sf::RenderWindow& window);
+	void									update(sf::Time dt);
+	void									move(sf::Vector2f distance);
+	void									handelMovement(sf::Time& dt);
+	const EntityBounds						getEntityBounds();
 
-	bool						isFalling();
-
-public:  // Public Data
-	bool						leftContact;
-	bool						rightContact;
-	bool						bottomContact;
-
-private: // Functions or Methods
-	void						move(sf::Vector2f distance);
-	void						handelInput(sf::Time dt);
+private: // Methods
+	void									fireBullet();
 
 private: // Data Members
-	sf::Vector2f				mMovement;
-	sf::RectangleShape			mBody;
-	sf::CircleShape				mRoller;
-
-	bool						mIsMovingDown;
-
-	static const float			MovementSpeed;
+	sf::CircleShape							mRoller;
+	bool									mIsMovingDown;
+	bool									mIsFacingRight;
 };

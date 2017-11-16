@@ -1,30 +1,17 @@
 #pragma once
 #include "ResourceIdentifiers.h"
-class Enemy
+class Enemy : public Entity
 {
 public:
 	Enemy();
 	void							update(sf::Time dt);
-	void							move(sf::Time dt);
-	const sf::RectangleShape&		getBody();
 	void							draw(sf::RenderWindow& window);
-	void							calculateCollisions(const std::vector<RectPointer>& platforms);
+	const EntityBounds				getEntityBounds();
+	void							handelMovement(sf::Time& dt);
+	void							checkBulletHit(std::vector<std::unique_ptr<Bullet>>& platforms);
 
 public:
-
-	bool							leftContact;
-	bool							rightContact;
-	bool							bottomContact;
-
+	int								HitCount;
 private:
-	void							initMovement();
-
-private:
-	
-	sf::RectangleShape				mBody;
-
-	static const float				MovementSpeed;
-
-	bool							mIsMovingRight;
+	void							initMoveDirection();
 };
-

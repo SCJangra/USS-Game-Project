@@ -1,13 +1,8 @@
 #include "stdafx.h"
 #include "Enemy.h"
 
-const float Enemy::MovementSpeed = 200.f;
 
-Enemy::Enemy()
-	: leftContact(false)
-	, rightContact(false)
-	, bottomContact(false)
-	, mBody(sf::RectangleShape())
+Enemy::Enemy() : Entity()
 {
 	std::random_device rd;								// obtain a random number from hardware
 	std::mt19937 eng(rd());								// seed the generator
@@ -18,48 +13,14 @@ Enemy::Enemy()
 	mBody.setPosition((float)distr(eng), -67.f);
 	mBody.setFillColor(sf::Color::White);
 
-	initMovement();
+	HitCount = 0;
+
+	initMoveDirection();
 }
 
 void Enemy::update(sf::Time dt)
 {
-	move(dt);
-}
-
-void Enemy::move(sf::Time dt)
-{
-	sf::Vector2f movement(0.f, 0.f);
-
-	// Move down if not standing on any platform
-	if (!bottomContact)			movement.y += MovementSpeed;
-
-	// Change direction if left collision detected
-	if (!leftContact && bottomContact && !mIsMovingRight) {
-		movement.x -= MovementSpeed;
-	}
-	else if (leftContact && bottomContact && !mIsMovingRight) {
-		movement.x += MovementSpeed;
-		mIsMovingRight = true;
-	}
-
-	// Change direction if right collision detected
-	if (!rightContact && bottomContact && mIsMovingRight) {
-		movement.x += MovementSpeed;
-	}
-	else if (rightContact && bottomContact && mIsMovingRight) {
-		movement.x -= MovementSpeed;
-		mIsMovingRight = false;
-	}
-	mBody.move(movement * dt.asSeconds());
-
-	leftContact = false;
-	rightContact = false;
-	bottomContact = false;
-}
-
-const sf::RectangleShape& Enemy::getBody()
-{
-	return mBody;
+	handelMovement(dt);
 }
 
 void Enemy::draw(sf::RenderWindow & window)
@@ -67,50 +28,63 @@ void Enemy::draw(sf::RenderWindow & window)
 	window.draw(mBody);
 }
 
-bool check(const std::vector<RectPointer>& platforms, sf::Vector2f& point) {
-	sf::Vector2f platformPosition;
-	sf::Vector2f platformSize;
-	for (int i = 0; i < platforms.size(); i++) {
-		platformPosition = platforms[i].get()->getPosition();
-		platformSize = platforms[i].get()->getSize();
+const Entity::EntityBounds Enemy::getEntityBounds()
+{
+	EntityBounds bounds;
+	bounds.position = mBody.getPosition();
+	bounds.size = mBody.getSize();
+	return bounds;
+}
 
+void Enemy::handelMovement(sf::Time& dt)
+{
+	sf::Vector2f movement(0.f, 0.f);
+
+	// Move down if not standing on any platform
+	if (!mBottomContact)			movement.y += MovementSpeed;
+
+	// Change direction if left collision detected
+	if (!mLeftContact && mBottomContact && !mIsMovingRight) {
+		movement.x -= MovementSpeed;
+	}
+	else if (mLeftContact && mBottomContact && !mIsMovingRight) {
+		movement.x += MovementSpeed;
+		mIsMovingRight = true;
+	}
+
+	// Change direction if right collision detected
+	if (!mRightContact && mBottomContact && mIsMovingRight) {
+		movement.x += MovementSpeed;
+	}
+	else if (mRightContact && mBottomContact && mIsMovingRight) {
+		movement.x -= MovementSpeed;
+		mIsMovingRight = false;
+	}
+	mBody.move(movement * dt.asSeconds());
+
+	mLeftContact = false;
+	mRightContact = false;
+	mBottomContact = false;
+}
+
+void Enemy::checkBulletHit(std::vector<std::unique_ptr<Bullet>>& bullets)
+{
+	sf::Vector2f bulletPosition;
+	for (int i = 0; i < bullets.size(); i++) {
+		bulletPosition = bullets[i]->getPosition();
 		if (
-			point.x + 2 >= platformPosition.x &&
-			point.y + 2 >= platformPosition.y &&
-			point.x - 2 <= platformPosition.x + platformSize.x &&
-			point.y - 2 <= platformPosition.y + platformSize.y
-			)
-		{
-			return true;
+			bulletPosition.x >= mBody.getPosition().x &&
+			bulletPosition.y >= mBody.getPosition().y &&
+			bulletPosition.x <= mBody.getPosition().x + mBody.getSize().x &&
+			bulletPosition.y <= mBody.getPosition().y + mBody.getSize().y
+			) {
+			bullets.erase(bullets.begin() + i);
+			HitCount++;
 		}
 	}
-	return false;
 }
 
-void Enemy::calculateCollisions(const std::vector<RectPointer>& platforms)
-{
-	sf::Vector2f collisionPoint;
-	if (!bottomContact) {
-		bool l, r;
-		collisionPoint = mBody.getPosition() + mBody.getSize();
-		l = check(platforms, collisionPoint);
-		collisionPoint.x = mBody.getPosition().x;
-		collisionPoint.y = mBody.getPosition().y + mBody.getSize().y;
-		r = check(platforms, collisionPoint);
-		bottomContact = l || r;
-	}
-	if (bottomContact && mIsMovingRight) {
-		collisionPoint.x = mBody.getPosition().x + mBody.getSize().x;
-		collisionPoint.y = mBody.getPosition().y;
-		rightContact = check(platforms, collisionPoint);
-	}
-	if (bottomContact && !mIsMovingRight) {
-		collisionPoint = mBody.getPosition();
-		leftContact = check(platforms, collisionPoint);
-	}
-}
-
-void Enemy::initMovement()
+void Enemy::initMoveDirection()
 {
 	std::random_device rd;								// obtain a random number from hardware
 	std::mt19937 eng(rd());								// seed the generator

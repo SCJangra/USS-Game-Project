@@ -11,12 +11,19 @@ private:
 	void					update(sf::Time elapsedTime);
 	void					render();
 
+	void					updateStatistics(sf::Time elapsedTime);
+
 
 private:
+	static const float		PlayerSpeed;
 	static const sf::Time	TimePerFrame;
 
 	sf::RenderWindow		mWindow;
-	World					mWorld;
+	sf::Font				mFont;
+	sf::Text				mStatisticsText;
+	sf::Time				mStatisticsUpdateTime;
 
-	sf::ContextSettings		mSettings;
+	std::size_t				mStatisticsNumFrames;
+
+	World					mWorld;
 };
