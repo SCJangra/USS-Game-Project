@@ -1,20 +1,26 @@
 #include "stdafx.h"
 
-const float Game::PlayerSpeed = 100.f;
-const sf::Time Game::TimePerFrame = sf::seconds(1.f / 60.f);
+const	float		Game::PlayerSpeed = 100.f;
+const	sf::Time	Game::TimePerFrame = sf::seconds(1.f / 60.f);
+		int			Game::Score = 0;
 
 Game::Game()
 	: mWindow(sf::VideoMode(1366, 768), "USS", sf::Style::Default)
 	, mWorld(mWindow)
 	, mFont()
 	, mStatisticsText()
+	, mScoreText()
 	, mStatisticsUpdateTime()
 	, mStatisticsNumFrames(0)
 {
 	mFont.loadFromFile("Assets/Sansation.ttf");
 	mStatisticsText.setFont(mFont);
-	mStatisticsText.setPosition(5.f, 5.f);
-	mStatisticsText.setCharacterSize(10);
+	mStatisticsText.setPosition(35.f, 5.f);
+	mStatisticsText.setCharacterSize(20);
+
+	mScoreText.setFont(mFont);
+	mScoreText.setPosition({ mWindow.getSize().x - 200.f, 5.f });
+	mScoreText.setCharacterSize(20);
 }
 
 void Game::run()
@@ -62,6 +68,7 @@ void Game::render()
 	mWindow.clear();
 	mWorld.draw();
 	mWindow.draw(mStatisticsText);
+	mWindow.draw(mScoreText);
 	mWindow.display();
 }
 
@@ -78,5 +85,7 @@ void Game::updateStatistics(sf::Time elapsedTime)
 
 		mStatisticsUpdateTime -= sf::seconds(1.0f);
 		mStatisticsNumFrames = 0;
+
+		mScoreText.setString("Score: " + std::to_string(Score));
 	}
 }

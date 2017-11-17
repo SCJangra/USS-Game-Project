@@ -70,6 +70,7 @@ void Enemy::handelMovement(sf::Time& dt)
 void Enemy::checkBulletHit(std::vector<std::unique_ptr<Bullet>>& bullets)
 {
 	sf::Vector2f bulletPosition;
+	sf::Vector2f bulletSize({ 75, 7 });
 	for (int i = 0; i < bullets.size(); i++) {
 		bulletPosition = bullets[i]->getPosition();
 		if (

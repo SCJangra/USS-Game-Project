@@ -5,10 +5,15 @@ Player::Player(sf::Vector2f initPosition)
 	: Entity()
 	, mIsMovingDown(false)
 	, mIsFacingRight(true)
+	, mBulletTextureLeft()
+	, mBulletTextureRight()
 {
+	mBulletTextureLeft.loadFromFile("Assets/Textures/Bullets/Bullet1Left.png");
+	mBulletTextureRight.loadFromFile("Assets/Textures/Bullets/Bullet1Right.png");
+
+
 	mBody.setSize({ 30, 50 });
 	mBody.setPosition({ initPosition.x, initPosition.y });
-	//mBody.setOrigin({ 15, 25 });
 	mBody.setFillColor(sf::Color::Green);
 
 	mRoller.setRadius(15.f);
@@ -39,6 +44,7 @@ void Player::move(sf::Vector2f distance)
 {
 	mBody.move(distance);
 	mRoller.move(distance);
+
 	mBottomContact = false;
 	mRightContact = false;
 	mLeftContact = false;
@@ -62,6 +68,8 @@ void Player::handelMovement(sf::Time& dt)
 	bool keyPressed_S = sf::Keyboard::isKeyPressed(sf::Keyboard::S);
 	bool keyPressed_A = sf::Keyboard::isKeyPressed(sf::Keyboard::A);
 	bool keyPressed_D = sf::Keyboard::isKeyPressed(sf::Keyboard::D);
+
+	if (mBody.getPosition().y <= 0) mTopContact = true;
 
 	if (keyPressed_W && !mTopContact) {
 		movement.y -= MovementSpeed;
@@ -108,12 +116,14 @@ void Player::fireBullet()
 			bullet->setPosition({
 				mBody.getPosition().x + mBody.getSize().x,
 				mBody.getPosition().y + mBody.getSize().y / 2 });
+			bullet->setTexture(mBulletTextureRight);
 		}
 		else
 		{
 			bullet->setPosition({
-				mBody.getPosition().x,
+				mBody.getPosition().x - 75,
 				mBody.getPosition().y + mBody.getSize().y / 2 });
+			bullet->setTexture(mBulletTextureLeft);
 		}
 		Bullets.push_back(std::move(bullet));
 

@@ -5,6 +5,9 @@ public:
 	Game();
 	void					run();
 
+public:
+	static int				Score;
+
 
 private:
 	void					processEvents();
@@ -20,6 +23,7 @@ private:
 
 	sf::RenderWindow		mWindow;
 	sf::Font				mFont;
+	sf::Text				mScoreText;
 	sf::Text				mStatisticsText;
 	sf::Time				mStatisticsUpdateTime;
 

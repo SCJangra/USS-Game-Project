@@ -17,6 +17,8 @@ private: // Methods
 	void									fireBullet();
 
 private: // Data Members
+	sf::Texture								mBulletTextureLeft;
+	sf::Texture								mBulletTextureRight;
 	sf::CircleShape							mRoller;
 	bool									mIsMovingDown;
 	bool									mIsFacingRight;

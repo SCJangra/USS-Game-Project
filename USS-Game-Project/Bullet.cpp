@@ -4,7 +4,7 @@
 Bullet::Bullet(bool isFiredTowardsRight)
 	: mBullet()
 {
-	mBullet.setSize({ 10.f, 5.f });
+	mBullet.setSize({ 75.f, 7.f });
 	mBullet.setFillColor(sf::Color::White);
 	mIsFiredTowardsRight = isFiredTowardsRight;
 }
@@ -12,10 +12,10 @@ Bullet::Bullet(bool isFiredTowardsRight)
 void Bullet::draw(sf::RenderWindow & window)
 {
 	if (mIsFiredTowardsRight) {
-		mBullet.move({ 1.f, 0.f });
+		mBullet.move({ 3.f, 0.f });
 	}
 	else {
-		mBullet.move({ -1.f, 0.f });
+		mBullet.move({ -3.f, 0.f });
 	}
 	window.draw(mBullet);
 }
@@ -27,5 +27,23 @@ void Bullet::setPosition(sf::Vector2f position)
 
 sf::Vector2f Bullet::getPosition()
 {
-	return mBullet.getPosition();
+	if (mIsFiredTowardsRight) {
+		sf::Vector2f p;
+		p.x = mBullet.getPosition().x + mBullet.getSize().x;
+		p.y = mBullet.getPosition().y;
+		return p;
+	}
+	else {
+		return mBullet.getPosition();
+	}
+}
+
+sf::Vector2f Bullet::getSize()
+{
+	return mBullet.getSize();
+}
+
+void Bullet::setTexture(sf::Texture & texture)
+{
+	mBullet.setTexture(&texture);
 }
