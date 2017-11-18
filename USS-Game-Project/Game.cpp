@@ -5,7 +5,7 @@ const	sf::Time	Game::TimePerFrame = sf::seconds(1.f / 60.f);
 		int			Game::Score = 0;
 
 Game::Game()
-	: mWindow(sf::VideoMode(1366, 768), "USS", sf::Style::Default)
+	: mWindow(sf::VideoMode(1920, 1080), "USS", sf::Style::Fullscreen)
 	, mWorld(mWindow)
 	, mFont()
 	, mStatisticsText()

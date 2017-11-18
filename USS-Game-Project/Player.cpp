@@ -31,7 +31,7 @@ void Player::draw(sf::RenderWindow & window)
 
 	for (int i = 0; i < Bullets.size(); i++) {
 		Bullets[i]->draw(window);
-		if (Bullets[i]->getPosition().x > 1366.f ||
+		if (Bullets[i]->getPosition().x > 1920.f ||
 			Bullets[i]->getPosition().x < 0
 		) 
 		{
@@ -56,8 +56,6 @@ void Player::update(sf::Time dt)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::J)) {
 		fireBullet();
 	}
-
-	
 }
 
 void Player::handelMovement(sf::Time& dt)

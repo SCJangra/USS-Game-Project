@@ -60,6 +60,13 @@ void Enemy::handelMovement(sf::Time& dt)
 		movement.x -= MovementSpeed;
 		mIsMovingRight = false;
 	}
+
+	if (mBody.getPosition().x <= -64 && !mIsMovingRight) {
+		mBody.setPosition({ 1920, mBody.getPosition().y });
+	}
+	else if (mBody.getPosition().x >= 1920 && mIsMovingRight) {
+		mBody.setPosition({ 0, mBody.getPosition().y - 64});
+	}
 	mBody.move(movement * dt.asSeconds());
 
 	mLeftContact = false;
