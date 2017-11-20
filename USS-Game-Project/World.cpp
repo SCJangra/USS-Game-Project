@@ -5,7 +5,8 @@ int World::MaxEnemies = 20;
 
 World::World(sf::RenderWindow& window)
 	: mWindow(window)
-	, mFirstPlayer({ 200, 200 })
+	, mFirstPlayer({ 200, 100 })
+	, mSecondPlayer({1000, 100})
 	, mPlatforms()
 	, mEnemies()
 	, mTiles()
@@ -13,6 +14,7 @@ World::World(sf::RenderWindow& window)
 	, mBGTexture()
 	, mObjects()
 {
+	// Load and setup background
 	mBGTexture.loadFromFile("Assets/Textures/BG/BG.png");
 	mBGTexture.setSmooth(true);
 	mBGSprite.setTexture(mBGTexture);
@@ -21,6 +23,10 @@ World::World(sf::RenderWindow& window)
 
 
 	loadTextures();
+
+	/*-----------------------------------
+	  | SetUp the Level					|
+	  -----------------------------------*/
 	float tileHeight = 64.f, tileWidth = 64.f;
 	float tileHeight2 = 46;
 	float screenHeight = 1080, screenWidth = 1920;
@@ -84,20 +90,35 @@ World::World(sf::RenderWindow& window)
 	createPlatform({ 18 * tileWidth, screenHeight - tileHeight * 13 }, { 4 * tileWidth, tileHeight2 }, 15);
 	createPlatform({ 24 * tileWidth, screenHeight - tileHeight * 13 }, { 8 * tileWidth, tileHeight2 }, 15);
 
+	mFirstPlayer.setUpKey(sf::Keyboard::W);
+	mFirstPlayer.setDownKey(sf::Keyboard::S);
+	mFirstPlayer.setLeftKey(sf::Keyboard::A);
+	mFirstPlayer.setRightKey(sf::Keyboard::D);
+	mFirstPlayer.setFireKey(sf::Keyboard::V);
+
+	mSecondPlayer.setUpKey(sf::Keyboard::Up);
+	mSecondPlayer.setDownKey(sf::Keyboard::Down);
+	mSecondPlayer.setLeftKey(sf::Keyboard::Left);
+	mSecondPlayer.setRightKey(sf::Keyboard::Right);
+	mSecondPlayer.setFireKey(sf::Keyboard::RControl);
 }
 
 void World::update(sf::Time& dt)
 {
 	mFirstPlayer.calculateCollisions(mPlatforms);
+	mSecondPlayer.calculateCollisions(mPlatforms);
 	mFirstPlayer.update(dt);
+	mSecondPlayer.update(dt);
 
 	spawnEnemy();
 	for (int i = 0; i < mEnemies.size(); i++) {
 		mEnemies[i]->calculateCollisions(mPlatforms);
 		mEnemies[i]->checkBulletHit(mFirstPlayer.Bullets);
+		mEnemies[i]->checkBulletHit(mSecondPlayer.Bullets);
 		mEnemies[i]->update(dt);
 		if (mEnemies[i]->getEntityBounds().position.y > 1080) {
 			mEnemies.erase(mEnemies.begin() + i);
+			Game::Health--;
 		}
 		if (mEnemies[i]->HitCount >= 2) {
 			mEnemies.erase(mEnemies.begin() + i);
@@ -113,12 +134,14 @@ void World::draw()
 		mObjects[i].draw(mWindow);
 	}
 	mFirstPlayer.draw(mWindow);
-	for (int i = 0; i < mPlatforms.size(); i++) {
-		mWindow.draw(*mPlatforms[i].get());
-	}
+	mSecondPlayer.draw(mWindow);
 	for (int i = 0; i < mEnemies.size(); i++) {
 		mEnemies[i]->draw(mWindow);
 	}
+	for (int i = 0; i < mPlatforms.size(); i++) {
+		mWindow.draw(*mPlatforms[i].get());
+	}
+	
 }
 
 void World::createPlatform(sf::Vector2f position, sf::Vector2f size, int textureNumber, int rotate)
@@ -127,7 +150,7 @@ void World::createPlatform(sf::Vector2f position, sf::Vector2f size, int texture
 	RectPointer rect(new sf::RectangleShape(size));
 	
 	rect->setTexture(&mTiles[textureNumber]);
-	rect->setTextureRect(sf::IntRect(0, 0, size.x * 2, size.y * 2));
+	rect->setTextureRect(sf::IntRect(0, 0, (int)size.x * 2, (int)size.y * 2));
 	rect->setPosition(position);
 	mPlatforms.push_back(std::move(rect));
 }
@@ -135,9 +158,16 @@ void World::createPlatform(sf::Vector2f position, sf::Vector2f size, int texture
 void World::spawnEnemy()
 {
 	static sf::Clock clock;
-	if (clock.getElapsedTime() > sf::seconds(1.f) && mEnemies.size() < MaxEnemies) {
+	static sf::Clock speedClock;
+	static float spawnSpeed = 1.f;
+	if (clock.getElapsedTime() > sf::seconds(spawnSpeed) && mEnemies.size() < MaxEnemies) {
 		mEnemies.push_back(std::make_unique<Enemy>());
 		clock.restart();
+	}
+	if (speedClock.getElapsedTime() > sf::seconds(2.f)) {
+		Enemy::MovementSpeed += 5;
+		spawnSpeed -= .1f;
+		speedClock.restart();
 	}
 }
 

@@ -8,7 +8,7 @@ Entity::Entity()
 	, mBottomContact(false)
 	, mTopContact(false)
 	, mBody(sf::RectangleShape())
-	, MovementSpeed(200.f)
+	, mTexture()
 {
 }
 

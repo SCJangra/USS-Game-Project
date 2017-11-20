@@ -19,6 +19,7 @@ private:
 	sf::Sprite									mBGSprite;
 	sf::Texture									mBGTexture;
 	Player										mFirstPlayer;
+	Player										mSecondPlayer;
 	sf::RenderWindow&							mWindow;
 	std::vector<RectPointer>					mPlatforms;
 	std::vector<std::unique_ptr<Enemy>>			mEnemies;

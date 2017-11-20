@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "imgui-SFML.h"
 #include <imgui.h>
 

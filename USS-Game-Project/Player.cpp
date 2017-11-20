@@ -1,27 +1,41 @@
 #include "stdafx.h"
 #include "Player.h"
 
+const float Player::MovementSpeed = 300.f;
+
 Player::Player(sf::Vector2f initPosition)
 	: Entity()
 	, mIsMovingDown(false)
 	, mIsFacingRight(true)
 	, mBulletTextureLeft()
 	, mBulletTextureRight()
+	, mBulletBuffer()
+	, mBulletSound()
+	, mUpKey()
+	, mDownKey()
+	, mRightKey()
+	, mLeftKey()
+	, mFireKey()
+	, mClock()
 {
+	// Load Bullet textures
 	mBulletTextureLeft.loadFromFile("Assets/Textures/Bullets/Bullet1Left.png");
 	mBulletTextureRight.loadFromFile("Assets/Textures/Bullets/Bullet1Right.png");
 
-
+	// Initialize Player Body size and position
 	mBody.setSize({ 30, 50 });
 	mBody.setPosition({ initPosition.x, initPosition.y });
 	mBody.setFillColor(sf::Color::Green);
 
+	// Initialize Player wheel size and position
 	mRoller.setRadius(15.f);
 	mRoller.setOrigin({ 15, 15 });
 	mRoller.setFillColor(sf::Color::Yellow);
 	mRoller.setPosition(initPosition.x + 15, initPosition.y + 50);
 
-	MovementSpeed = 300.f;
+	mBulletBuffer.loadFromFile("Assets/Music/BulletFire/BulletFire.wav");
+	mBulletSound.setBuffer(mBulletBuffer);
+
 }
 
 void Player::draw(sf::RenderWindow & window)
@@ -53,19 +67,18 @@ void Player::move(sf::Vector2f distance)
 void Player::update(sf::Time dt)
 {
 	handelMovement(dt);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::J)) {
-		fireBullet();
-	}
+
+	// Check if fire key is pressed
+	
 }
 
 void Player::handelMovement(sf::Time& dt)
 {
-	static sf::Clock clock;
 	sf::Vector2f movement(0.f, 0.f);
-	bool keyPressed_W = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
-	bool keyPressed_S = sf::Keyboard::isKeyPressed(sf::Keyboard::S);
-	bool keyPressed_A = sf::Keyboard::isKeyPressed(sf::Keyboard::A);
-	bool keyPressed_D = sf::Keyboard::isKeyPressed(sf::Keyboard::D);
+	bool keyPressed_W = sf::Keyboard::isKeyPressed(mUpKey);
+	bool keyPressed_S = sf::Keyboard::isKeyPressed(mDownKey);
+	bool keyPressed_A = sf::Keyboard::isKeyPressed(mLeftKey);
+	bool keyPressed_D = sf::Keyboard::isKeyPressed(mRightKey);
 
 	if (mBody.getPosition().y <= 0) mTopContact = true;
 
@@ -89,6 +102,10 @@ void Player::handelMovement(sf::Time& dt)
 		movement.y += MovementSpeed;
 		mIsMovingDown = true;
 	}
+
+	if (sf::Keyboard::isKeyPressed(mFireKey)) {
+		fireBullet();
+	}
 	
 	move(movement * dt.asSeconds());
 }
@@ -102,10 +119,34 @@ const Entity::EntityBounds Player::getEntityBounds()
 	return bounds;
 }
 
+void Player::setUpKey(sf::Keyboard::Key key)
+{
+	mUpKey = key;
+}
+
+void Player::setDownKey(sf::Keyboard::Key key)
+{
+	mDownKey = key;
+}
+
+void Player::setRightKey(sf::Keyboard::Key key)
+{
+	mRightKey = key;
+}
+
+void Player::setLeftKey(sf::Keyboard::Key key)
+{
+	mLeftKey = key;
+}
+
+void Player::setFireKey(sf::Keyboard::Key key)
+{
+	mFireKey = key;
+}
+
 void Player::fireBullet()
 {
-	static sf::Clock clock;
-	if (clock.getElapsedTime()	> sf::seconds(.2f) &&
+	if (mClock.getElapsedTime()	> sf::seconds(.2f) &&
 		MaxBullets				> Bullets.size()
 	) 
 	{
@@ -124,7 +165,8 @@ void Player::fireBullet()
 			bullet->setTexture(mBulletTextureLeft);
 		}
 		Bullets.push_back(std::move(bullet));
+		mBulletSound.play();
 
-		clock.restart();
+		mClock.restart();
 	}
 }

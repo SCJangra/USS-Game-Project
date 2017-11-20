@@ -3,6 +3,7 @@
 const	float		Game::PlayerSpeed = 100.f;
 const	sf::Time	Game::TimePerFrame = sf::seconds(1.f / 60.f);
 		int			Game::Score = 0;
+		int			Game::Health = 100;
 
 Game::Game()
 	: mWindow(sf::VideoMode(1920, 1080), "USS", sf::Style::Fullscreen)
@@ -10,17 +11,30 @@ Game::Game()
 	, mFont()
 	, mStatisticsText()
 	, mScoreText()
+	, mHealthText()
 	, mStatisticsUpdateTime()
 	, mStatisticsNumFrames(0)
+	, mBGMusic()
 {
+	// Start Playing the music
+	mBGMusic.openFromFile("Assets/Music/BGMusic/MegaMan3All.ogg");
+	mBGMusic.play();
+	mBGMusic.setVolume(100.f);
+	mBGMusic.setPlayingOffset(sf::seconds(60 * 4 + 50));
+
+	// Load font and set text properties
 	mFont.loadFromFile("Assets/Sansation.ttf");
 	mStatisticsText.setFont(mFont);
-	mStatisticsText.setPosition(35.f, 5.f);
+	mStatisticsText.setPosition(25.f, 25.f);
 	mStatisticsText.setCharacterSize(20);
 
 	mScoreText.setFont(mFont);
-	mScoreText.setPosition({ mWindow.getSize().x - 200.f, 5.f });
+	mScoreText.setPosition({ mWindow.getSize().x - 200.f, 25.f });
 	mScoreText.setCharacterSize(20);
+
+	mHealthText.setFont(mFont);
+	mHealthText.setPosition({ mWindow.getSize().x / 2.f, 25.f });
+	mHealthText.setCharacterSize(20);
 }
 
 void Game::run()
@@ -49,11 +63,8 @@ void Game::processEvents()
 	sf::Event event;
 	while (mWindow.pollEvent(event))
 	{
-		switch (event.type)
-		{
-		case sf::Event::Closed:
+		if (event.type == sf::Event::Closed) {
 			mWindow.close();
-			break;
 		}
 	}
 }
@@ -69,6 +80,7 @@ void Game::render()
 	mWorld.draw();
 	mWindow.draw(mStatisticsText);
 	mWindow.draw(mScoreText);
+	mWindow.draw(mHealthText);
 	mWindow.display();
 }
 
@@ -87,5 +99,6 @@ void Game::updateStatistics(sf::Time elapsedTime)
 		mStatisticsNumFrames = 0;
 
 		mScoreText.setString("Score: " + std::to_string(Score));
+		mHealthText.setString("Health: " + std::to_string(Health));
 	}
 }

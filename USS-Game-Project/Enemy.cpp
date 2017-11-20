@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Enemy.h"
 
+float Enemy::MovementSpeed = 200.f;
 
 Enemy::Enemy() : Entity()
 {
@@ -9,8 +10,11 @@ Enemy::Enemy() : Entity()
 	std::uniform_real_distribution<> distr(31.f, 1335.f);	// define the range
 	std::uniform_int_distribution<> rand(0, 1);
 
-	mBody.setSize({ 30, 65 });
-	mBody.setPosition((float)distr(eng), -67.f);
+	mTexture.loadFromFile("Assets/Textures/Enemy/SnowMan.png");
+
+	mBody.setSize({ mTexture.getSize().x / 5.f, mTexture.getSize().y / 5.f });
+	mBody.setPosition((float)distr(eng), -mBody.getSize().y);
+	mBody.setTexture(&mTexture);
 	mBody.setFillColor(sf::Color::White);
 
 	HitCount = 0;

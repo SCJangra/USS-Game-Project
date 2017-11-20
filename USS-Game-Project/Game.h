@@ -7,6 +7,7 @@ public:
 
 public:
 	static int				Score;
+	static int				Health;
 
 
 private:
@@ -24,8 +25,10 @@ private:
 	sf::RenderWindow		mWindow;
 	sf::Font				mFont;
 	sf::Text				mScoreText;
+	sf::Text				mHealthText;
 	sf::Text				mStatisticsText;
 	sf::Time				mStatisticsUpdateTime;
+	sf::Music				mBGMusic;
 
 	std::size_t				mStatisticsNumFrames;
 

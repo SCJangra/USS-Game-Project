@@ -10,13 +10,12 @@ protected:
 		sf::Vector2f					position;
 		sf::Vector2f					size;
 	};
-
-	float								MovementSpeed;
 	bool								mIsMovingRight;
 	bool								mLeftContact;
 	bool								mRightContact;
 	bool								mBottomContact;
 	bool								mTopContact;
+	sf::Texture							mTexture;
 
 public:
 	Entity();
