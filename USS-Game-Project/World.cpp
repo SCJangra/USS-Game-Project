@@ -5,8 +5,7 @@ int World::MaxEnemies = 20;
 
 World::World(sf::RenderWindow& window)
 	: mWindow(window)
-	, mFirstPlayer({ 200, 100 })
-	, mSecondPlayer({1000, 100})
+	, mPlayer({ 200, 100 })
 	, mPlatforms()
 	, mEnemies()
 	, mTiles()
@@ -89,38 +88,23 @@ World::World(sf::RenderWindow& window)
 	createPlatform({ 10 * tileWidth, screenHeight - tileHeight * 13 }, { 6 * tileWidth, tileHeight2 }, 15);
 	createPlatform({ 18 * tileWidth, screenHeight - tileHeight * 13 }, { 4 * tileWidth, tileHeight2 }, 15);
 	createPlatform({ 24 * tileWidth, screenHeight - tileHeight * 13 }, { 8 * tileWidth, tileHeight2 }, 15);
-
-	mFirstPlayer.setUpKey(sf::Keyboard::W);
-	mFirstPlayer.setDownKey(sf::Keyboard::S);
-	mFirstPlayer.setLeftKey(sf::Keyboard::A);
-	mFirstPlayer.setRightKey(sf::Keyboard::D);
-	mFirstPlayer.setFireKey(sf::Keyboard::V);
-
-	mSecondPlayer.setUpKey(sf::Keyboard::Up);
-	mSecondPlayer.setDownKey(sf::Keyboard::Down);
-	mSecondPlayer.setLeftKey(sf::Keyboard::Left);
-	mSecondPlayer.setRightKey(sf::Keyboard::Right);
-	mSecondPlayer.setFireKey(sf::Keyboard::RControl);
 }
 
 void World::update(sf::Time& dt)
 {
-	mFirstPlayer.calculateCollisions(mPlatforms);
-	mSecondPlayer.calculateCollisions(mPlatforms);
-	mFirstPlayer.update(dt);
-	mSecondPlayer.update(dt);
+	mPlayer.calculateCollisions(mPlatforms);
+	mPlayer.update(dt);
 
 	spawnEnemy();
 	for (int i = 0; i < mEnemies.size(); i++) {
 		mEnemies[i]->calculateCollisions(mPlatforms);
-		mEnemies[i]->checkBulletHit(mFirstPlayer.Bullets);
-		mEnemies[i]->checkBulletHit(mSecondPlayer.Bullets);
+		mEnemies[i]->checkBulletHit(mPlayer.Bullets);
 		mEnemies[i]->update(dt);
 		if (mEnemies[i]->getEntityBounds().position.y > 1080) {
 			mEnemies.erase(mEnemies.begin() + i);
 			Game::Health--;
 		}
-		if (mEnemies[i]->HitCount >= 2) {
+		if (mEnemies[i]->HitCount >= 1) {
 			mEnemies.erase(mEnemies.begin() + i);
 			Game::Score++;
 		}
@@ -133,8 +117,7 @@ void World::draw()
 	for (int i = 0; i < mObjects.size(); i++) {
 		mObjects[i].draw(mWindow);
 	}
-	mFirstPlayer.draw(mWindow);
-	mSecondPlayer.draw(mWindow);
+	mPlayer.draw(mWindow);
 	for (int i = 0; i < mEnemies.size(); i++) {
 		mEnemies[i]->draw(mWindow);
 	}
@@ -164,9 +147,11 @@ void World::spawnEnemy()
 		mEnemies.push_back(std::make_unique<Enemy>());
 		clock.restart();
 	}
-	if (speedClock.getElapsedTime() > sf::seconds(2.f)) {
+
+	// Increase enemy speed every two seconds
+	if (speedClock.getElapsedTime() > sf::seconds(5.f)) {
 		Enemy::MovementSpeed += 5;
-		spawnSpeed -= .1f;
+		spawnSpeed -= .01f;
 		speedClock.restart();
 	}
 }
@@ -179,7 +164,11 @@ void World::loadTextures()
 	SceneObjects object;
 	float screenWidth = 1920, screenHeight = 1080;
 	float tileWidth = 64, tileHeight = 64;
+
+	// Push an empty texture for location ZERO
+	// i.e mTiles[0] is an empty texture
 	mTiles.push_back(sf::Texture());
+
 	for (int i = 1; i <= 18; i++) {
 		texture.loadFromFile("Assets/Textures/Tiles/" + std::to_string(i) + ".png");
 		texture.setRepeated(true);

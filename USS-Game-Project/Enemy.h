@@ -2,7 +2,7 @@
 #include "ResourceIdentifiers.h"
 class Enemy : public Entity
 {
-public:
+public: // Functions
 	Enemy();
 	void					update(sf::Time dt);
 	void					draw(sf::RenderWindow& window);
@@ -12,8 +12,8 @@ public:
 
 	static float			MovementSpeed;
 
-public:
+public: // Data Members
 	int						HitCount;
-private:
+private: // Data Members
 	void					initMoveDirection();
 };

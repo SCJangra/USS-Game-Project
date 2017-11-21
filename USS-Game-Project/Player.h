@@ -1,11 +1,8 @@
 #pragma once
 class Player : public Entity
 {
-public: // Methods
+public:		// Public Functions
 	Player(sf::Vector2f initPosition);
-
-	int MaxBullets = 10;
-	std::vector<std::unique_ptr<Bullet>>	Bullets;
 
 	void									draw(sf::RenderWindow& window);
 	void									update(sf::Time dt);
@@ -13,32 +10,23 @@ public: // Methods
 	void									handelMovement(sf::Time& dt);
 	const EntityBounds						getEntityBounds();
 
+public:		// Public Data
+	int MaxBullets = 10;
+	std::vector<std::unique_ptr<Bullet>>	Bullets;
 	static const float						MovementSpeed;
 
-	void									setUpKey(sf::Keyboard::Key key);
-	void									setDownKey(sf::Keyboard::Key key);
-	void									setRightKey(sf::Keyboard::Key key);
-	void									setLeftKey(sf::Keyboard::Key key);
-	void									setFireKey(sf::Keyboard::Key key);
-
-private: // Methods
+private:	// Private Functions
 	void									fireBullet();
 
-private: // Data Members
+private:	// Private Data
 	sf::SoundBuffer							mBulletBuffer;
 	sf::Sound								mBulletSound;
 	sf::Texture								mBulletTextureLeft;
 	sf::Texture								mBulletTextureRight;
-	sf::CircleShape							mRoller;
 	bool									mIsMovingDown;
 	bool									mIsFacingRight;
 
 	sf::Clock								mClock;
-
-	// Keys
-	sf::Keyboard::Key						mUpKey;
-	sf::Keyboard::Key						mDownKey;
-	sf::Keyboard::Key						mRightKey;
-	sf::Keyboard::Key						mLeftKey;
-	sf::Keyboard::Key						mFireKey;
+	sf::Texture								mPlayerTextureLeft;
+	sf::Texture								mPlayerTextureRight;
 };

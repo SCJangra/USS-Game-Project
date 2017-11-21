@@ -10,12 +10,11 @@ Enemy::Enemy() : Entity()
 	std::uniform_real_distribution<> distr(31.f, 1335.f);	// define the range
 	std::uniform_int_distribution<> rand(0, 1);
 
-	mTexture.loadFromFile("Assets/Textures/Enemy/SnowMan.png");
 
+	mTexture.loadFromFile("Assets/Textures/Enemy/SnowMan.png");
 	mBody.setSize({ mTexture.getSize().x / 5.f, mTexture.getSize().y / 5.f });
 	mBody.setPosition((float)distr(eng), -mBody.getSize().y);
 	mBody.setTexture(&mTexture);
-	mBody.setFillColor(sf::Color::White);
 
 	HitCount = 0;
 
@@ -88,7 +87,14 @@ void Enemy::checkBulletHit(std::vector<std::unique_ptr<Bullet>>& bullets)
 			bulletPosition.x >= mBody.getPosition().x &&
 			bulletPosition.y >= mBody.getPosition().y &&
 			bulletPosition.x <= mBody.getPosition().x + mBody.getSize().x &&
-			bulletPosition.y <= mBody.getPosition().y + mBody.getSize().y
+			bulletPosition.y <= mBody.getPosition().y + mBody.getSize().y ||
+
+				(
+				(bulletPosition + bulletSize).x >= mBody.getPosition().x &&
+				(bulletPosition + bulletSize).y >= mBody.getPosition().y &&
+				(bulletPosition + bulletSize).x <= mBody.getPosition().x + mBody.getSize().x &&
+				(bulletPosition + bulletSize).y <= mBody.getPosition().y + mBody.getSize().y
+				)
 			) {
 			bullets.erase(bullets.begin() + i);
 			HitCount++;

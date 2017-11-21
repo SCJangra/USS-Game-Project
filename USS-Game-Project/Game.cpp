@@ -3,7 +3,7 @@
 const	float		Game::PlayerSpeed = 100.f;
 const	sf::Time	Game::TimePerFrame = sf::seconds(1.f / 60.f);
 		int			Game::Score = 0;
-		int			Game::Health = 100;
+		int			Game::Health = 10;
 
 Game::Game()
 	: mWindow(sf::VideoMode(1920, 1080), "USS", sf::Style::Fullscreen)
@@ -15,7 +15,15 @@ Game::Game()
 	, mStatisticsUpdateTime()
 	, mStatisticsNumFrames(0)
 	, mBGMusic()
+	, mGameOverFont()
+	, mGameOverText()
 {
+	mGameOverFont.loadFromFile("Assets/LittleLordFontleroyNF.ttf");
+	mGameOverText.setFont(mGameOverFont);
+	mGameOverText.setCharacterSize(200);
+	mGameOverText.setPosition({ 600.f, 300.f });
+	mGameOverText.setString("Game Over");
+
 	// Start Playing the music
 	mBGMusic.openFromFile("Assets/Music/BGMusic/MegaMan3All.ogg");
 	mBGMusic.play();
@@ -71,16 +79,24 @@ void Game::processEvents()
 
 void Game::update(sf::Time elapsedTime)
 {
-	mWorld.update(elapsedTime);
+	if (Health > 0) mWorld.update(elapsedTime);
+	else {
+		mBGMusic.stop();
+	}
 }
 
 void Game::render()
 {
 	mWindow.clear();
-	mWorld.draw();
-	mWindow.draw(mStatisticsText);
-	mWindow.draw(mScoreText);
-	mWindow.draw(mHealthText);
+	if (Health > 0) {
+		mWorld.draw();
+		mWindow.draw(mStatisticsText);
+		mWindow.draw(mScoreText);
+		mWindow.draw(mHealthText);
+	}
+	else {
+		mWindow.draw(mGameOverText);
+	}
 	mWindow.display();
 }
 
